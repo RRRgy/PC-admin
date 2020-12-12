@@ -5,16 +5,9 @@ import 'normalize.css/normalize.css'
 
 import './plugins/vcharts'
 
-// 完整引入element-ui
-// import ElementUI from 'element-ui'
-// import 'element-ui/lib/theme-chalk/index.css'
 import './plugins/elements'
 
-// 引入es6模块化的测试模块
-import './test/es-module/test2'
-import './test/es-module/test4'
 
-// 引入全局样式
 import '@/styles/index.scss'
 
 import App from './App'
@@ -50,22 +43,6 @@ Vue.prototype.$hasBP = hasBtnPermission
 Vue.prototype.$API = API
 Vue.prototype.$BASE_API = process.env.VUE_APP_BASE_API
 
-// 引入mockjs的配置, 不使用
-/**
- * If you don't want to use mock-server
- * you want to use MockJs for mock api
- * you can execute: mockXHR()
- *
- * Currently MockJs will be used in the production environment,
- * please remove it before going online ! ! !
- */
-// if (process.env.NODE_ENV === 'production') {
-//   const { mockXHR } = require('../mock')
-//   mockXHR()
-// }
-
-// 声明使用element插件
-// Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
