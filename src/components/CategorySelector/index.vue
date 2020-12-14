@@ -58,15 +58,7 @@ export default {
       this.category1List = category1List
     },
 
-    /* 
-    什么时候分发: change事件回调中
-		事件名: categoryChange
-		携带的数据: 分类Id和分类级别(1/2/3)   {categoryId: 12, level: 1/2/3}
-    */
-
-    /* 
-    选中的一级分类ID发生变化的事件回调
-    */
+  
     async handleCategory1Change (category1Id) {
 
       // 分发分类ID发生改变的事件
@@ -82,9 +74,7 @@ export default {
       const result = await this.$API.category.getCategorys2(category1Id)
       this.category2List = result.data
     },
-    /* 
-    选中的二级分类ID发生变化的事件回调
-    */
+
     async handleCategory2Change (category2Id) {
       // 分发分类ID发生改变的事件
       this.$emit('categoryChange', {categoryId: category2Id, level: 2})

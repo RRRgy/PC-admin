@@ -1,9 +1,15 @@
 <template>
   <div>
-    <Category @change="getAttrList" :disabled="!isShowList" />
+    <Category :disabled="!isShowList" />
 
     <el-card v-show="isShowList" style="margin-top: 20px">
-      <el-button type="primary" icon="el-icon-plus">添加属性</el-button>
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        :disabled="!category.category3Id"
+        @click="add"
+        >添加属性</el-button
+      >
 
       <el-table :data="attrList" border style="width: 100%; margin: 20px 0">
         <el-table-column type="index" label="序号" width="80" align="center">
@@ -46,7 +52,11 @@
         </el-form-item>
       </el-form>
 
-      <el-button type="primary" icon="el-icon-plus" @click="addAttrValue"
+      <el-button
+        type="primary"
+        :disabled="!attr.attrName"
+        icon="el-icon-plus"
+        @click="addAttrValue"
         >添加属性值</el-button
       >
 
@@ -59,7 +69,7 @@
         </el-table-column>
         <el-table-column label="属性值名称">
           <template v-slot="{ row, $index }">
-         
+          
             <el-input
               v-if="row.edit"
               v-model="row.valueName"
@@ -69,7 +79,7 @@
               ref="input"
               size="mini"
             ></el-input>
-           
+            <!-- 直接给对象添加新属性不是响应式数据, 通过this.$set添加的属性才是响应式 -->
             <span
               v-else
               @click="edit(row)"
@@ -102,7 +112,7 @@
 </template>
 
 <script>
-import Category from "./category";
+import Category from "@/components/Category";
 
 
 export default {
@@ -115,9 +125,27 @@ export default {
         attrName: "",
         attrValueList: [],
       },
+      category: {
+        // 代表三个分类id数据
+        category1Id: "",
+        category2Id: "",
+        category3Id: "",
+      },
     };
   },
   methods: {
+    clearList() {
+      // 清空数据
+      this.attrList = [];
+      // 禁用按钮
+      this.category.category3Id = "";
+    },
+    // 显示添加属性列表
+    add() {
+      this.isShowList = false;
+      this.attr.attrName = "";
+      this.attr.attrValueList = [];
+    },
     editCompleted(row, index) {
       if (!row.valueName) {
         this.attr.attrValueList.splice(index, 1);
@@ -125,8 +153,23 @@ export default {
       }
       row.edit = false;
     },
+    // 保存
     async save() {
-      const result = await this.$API.attrs.saveAttrInfo(this.attr);
+      // 判断是否是添加
+      const isAdd = !this.attr.id;
+
+      const data = this.attr;
+
+      if (isAdd) {
+        // this.attr里面只有attrName和attrValueList
+        // 还需要categoryId和categoryLevel
+        data.categoryId = this.category.category3Id;
+        data.categoryLevel = 3;
+      }
+
+      // 修改
+      const result = await this.$API.attrs.saveAttrInfo(data);
+
       if (result.code === 200) {
         this.$message.success("更新属性成功~");
         this.isShowList = true;
@@ -173,6 +216,15 @@ export default {
         this.$message.error(result.message);
       }
     },
+  },
+  mounted() {
+    this.$bus.$on("change", this.getAttrList);
+    this.$bus.$on("clearList", this.clearList);
+  },
+  beforeDestroy() {
+    // 通常情况下：清除绑定的全局事件
+    this.$bus.$off("change", this.getAttrList);
+    this.$bus.$off("clearList", this.clearList);
   },
   components: {
     Category,

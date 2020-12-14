@@ -32,37 +32,19 @@ export default {
   // 配置mixin
   mixins: [ResizeMixin],
   computed: {
-    /* 
-    得到包含导航是否打开及是否不需要动画的标识属性的对象
-    */
+   
     sidebar() {
       return this.$store.state.app.sidebar
     },
-    /* 
-    得到当前显示设备名: desktop/mobile
-    */
+
     device() {
       return this.$store.state.app.device
     },
-    /* 
-    是否固定NavBar
-    */
+   
     fixedHeader() {
       return this.$store.state.settings.fixedHeader
     },
 
-    /* 
-    ...mapState({
-      sidebar: state => state.app.sidebar,
-      device: state => state.app.device,
-      fixedHeader: state => state.settings.fixedHeader,
-    }), */
- 
-    // ...mapGetters(['sidebar', 'device', 'fixedHeader']),
-
-    /* 
-    多个动态类名的对象
-    */
     classObj() {
       return {
         hideSidebar: !this.sidebar.opened, // 是否折叠菜单导航

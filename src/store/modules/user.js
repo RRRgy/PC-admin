@@ -106,12 +106,7 @@ const actions = {
   删除token与重置状态
   */
   async resetToken({ commit }) {
-    /* 
-    return new Promise(resolve => {
-      removeToken() // must remove  token  first
-      commit('RESET_STATE')
-      resolve()
-    }) */
+   
     removeToken() // must remove  token  first
     commit('RESET_STATE')
   }

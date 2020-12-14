@@ -1,26 +1,39 @@
 <template>
   <div>
     <el-button type="primary" @click="add" icon="el-icon-plus">添加</el-button>
+   
 
-    <el-table :data="trademarkList" v-loading="loading" border style="width: 100%; margin: 20px 0">
-      <el-table-column type="index" label="序号" width="80" align="center"></el-table-column>
-      <el-table-column prop="tmName" label="品牌名称"></el-table-column>
+    <el-table
+      :data="trademarkList"
+      v-loading="loading"
+      border
+      style="width: 100%; margin: 20px 0"
+    >
+      <el-table-column type="index" label="序号" width="80" align="center">
+      </el-table-column>
+      <el-table-column prop="tmName" label="品牌名称"> </el-table-column>
       <el-table-column label="品牌LOGO">
         <!-- <template slot-scope="scope"> -->
         <template v-slot="scope">
+        
           <img class="trademark-img" :src="scope.row.logoUrl" alt="logo" />
         </template>
       </el-table-column>
       <el-table-column label="操作">
         <template v-slot="{ row }">
-          <el-button type="warning" icon="el-icon-edit" @click="update(row)">修改</el-button>
-          <el-button type="danger" icon="el-icon-delete" @click="del(row)">删除</el-button>
+          <el-button type="warning" icon="el-icon-edit" @click="update(row)"
+            >修改</el-button
+          >
+          <el-button type="danger" icon="el-icon-delete" @click="del(row)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
 
+  
     <el-pagination
-      class="trademark-pagination"
+      class="pagination"
       @size-change="getPageList(page, $event)"
       @current-change="getPageList($event, limit)"
       :page-sizes="[3, 6, 9]"
@@ -28,14 +41,25 @@
       :current-page="page"
       layout="prev, pager, next, jumper, sizes, total"
       :total="total"
-    ></el-pagination>
+    >
+    </el-pagination>
 
-    <el-dialog :title="`${trademarkForm.id ? '修改' : '添加'}品牌`" :visible.sync="visible" width="50%">
-      <el-form :model="trademarkForm" :rules="rules" ref="trademarkForm" label-width="100px">
+    <el-dialog
+      :title="`${trademarkForm.id ? '修改' : '添加'}品牌`"
+      :visible.sync="visible"
+      width="50%"
+    >
+      <el-form
+        :model="trademarkForm"
+        :rules="rules"
+        ref="trademarkForm"
+        label-width="100px"
+      >
         <el-form-item label="品牌名称" prop="tmName">
           <el-input v-model="trademarkForm.tmName"></el-input>
         </el-form-item>
         <el-form-item label="品牌LOGO" prop="logoUrl">
+         
           <el-upload
             class="avatar-uploader"
             :action="`${$BASE_API}/admin/product/fileUpload`"
@@ -43,7 +67,11 @@
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
           >
-            <img v-if="trademarkForm.logoUrl" :src="trademarkForm.logoUrl" class="avatar" />
+            <img
+              v-if="trademarkForm.logoUrl"
+              :src="trademarkForm.logoUrl"
+              class="avatar"
+            />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
           <span>只能上传jpg/png文件，且不超过50kb</span>
@@ -51,7 +79,9 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="visible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('trademarkForm')">确 定</el-button>
+        <el-button type="primary" @click="submitForm('trademarkForm')"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -81,6 +111,7 @@ export default {
         // 表单校验规则
         tmName: [
           {
+         
             validator: this.validator,
             // 触发表单校验时机
             trigger: "blur",
@@ -96,6 +127,8 @@ export default {
         type: "warning",
       })
         .then(async () => {
+          // 点击确定的回调
+          // 发删除品牌的请求
           const result = await this.$API.trademark.deleteTrademark(row.id);
           // 如果成功了, 提示成功, 重新获取列表(哪一页?)
           this.$message({
@@ -103,6 +136,8 @@ export default {
             message: "删除成功!",
           });
 
+          // 哪一页?  显示上一页(当前页的列表数据只剩下1个)  否则显示当前页
+          // 如果当前是第1页且只剩下1条数据 ==> 请求第1页数据(当前页)
           this.getPageList(
             this.trademarkList.length === 1 && this.page > 1
               ? this.page - 1
@@ -121,6 +156,12 @@ export default {
         });
     },
     validator(rule, value, callback) {
+      /*
+        rule  校验的字段名
+        value 校验的字段值
+        callback 决定表单校验成功/失败
+      */
+      // 其中callback必须调用
       if (!value) {
         callback(new Error("请输入品牌名称"));
         return;
@@ -142,6 +183,16 @@ export default {
       };
     },
     update(row) {
+      /*
+        const a = [{x: 1}];
+        const b = a[0];
+        b.x = 2;
+
+        trademarkList: [row]
+        trademarkForm = row
+        trademarkForm.x = 2
+      */
+      // 清空表单的校验
       this.$refs.trademarkForm && this.$refs.trademarkForm.clearValidate();
 
       // 显示对话框
@@ -151,7 +202,10 @@ export default {
       this.trademarkForm = { ...row };
       // this.trademarkForm = JSON.parse(JSON.stringify(row));
     },
-
+    // updateCount() {
+    //   this.count++;
+    // },
+    // 提交表单
     submitForm(form) {
       // 校验表单
       this.$refs[form].validate(async (valid) => {
@@ -175,6 +229,9 @@ export default {
             }
           }
 
+          // 表单校验通过
+          // console.log(this.trademarkForm);
+          // 发送请求
           let result;
 
           if (isUpdate) {
@@ -273,12 +330,6 @@ export default {
 <style lang="sass" scoped>
 .trademark-img
   width: 150px
-
-.trademark-pagination
-  text-align: right
-
->>>.el-pagination__sizes
-  margin-left: 250px
 
 >>>.avatar-uploader .el-upload
   border: 1px dashed #d9d9d9

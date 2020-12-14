@@ -52,8 +52,7 @@ export default {
     }
   },
   data() {
-    // To fix https://github.com/PanJiaChen/vue-admin-template/issues/237
-    // TODO: refactor with render function
+   
     this.onlyOneChild = null
     return {}
   },
@@ -86,9 +85,6 @@ export default {
       return false
     },
 
-    /* 
-    处理外链与路由链接
-    */
     resolvePath(routePath) {
       if (isExternal(routePath)) {
         return routePath

@@ -12,9 +12,7 @@
 export default {
   name: 'AppMain',
   computed: {
-    /* 
-    将当前请求的路由路径作为标识key
-    */
+   
     key() {
       return this.$route.path
     }
