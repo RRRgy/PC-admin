@@ -1,12 +1,8 @@
 <template>
   <div>
-   
-    <Category />
-    <!--
-      v-show 组件虽然是隐藏的，但是组件被加载了~
-     -->
+    <Category :disabled="!isShowList" />
     <SpuShowList v-if="isShowList" @showUpdateList="showUpdateList" />
-    <SpuUpdateList v-else :item="item" />
+    <SpuUpdateList v-else :item="item" @showList="showList" />
   </div>
 </template>
 
@@ -14,7 +10,6 @@
 import Category from "@/components/Category";
 import SpuShowList from "./spuShowList";
 import SpuUpdateList from "./spuUpdateList";
-
 export default {
   name: "SpuList",
   data() {
@@ -27,6 +22,13 @@ export default {
     showUpdateList(row) {
       this.isShowList = false;
       this.item = { ...row };
+    },
+    showList(category3Id) {
+      this.isShowList = true;
+
+      this.$nextTick(() => {
+        this.$bus.$emit("change", { category3Id });
+      });
     },
   },
   components: {
